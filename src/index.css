@@ -53,6 +53,87 @@ body {
   background: #4a4a8e;
 }
 
+.searchbar {
+  position: relative;
+  margin-top: 0.75rem;
+}
+
+.searchbar input {
+  width: 100%;
+  background: #22223e;
+  color: inherit;
+  border: 1px solid #2e2e4e;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+}
+
+.search-results {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  margin: 0.25rem 0 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: #26264a;
+  border: 1px solid #3a3a6e;
+  border-radius: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.search-results button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: inherit;
+  border: none;
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+}
+
+.search-results button:hover {
+  background: #3a3a6e;
+}
+
+.backlinks {
+  margin-top: 1rem;
+  border-top: 1px solid #2e2e4e;
+  padding-top: 0.5rem;
+}
+
+.backlinks h2 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8888a8;
+  margin: 0 0 0.5rem;
+}
+
+.backlinks ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.backlinks button {
+  background: #26264a;
+  color: #8ab4ff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+}
+
+.backlinks button:hover {
+  background: #3a3a6e;
+}
+
 .note-list {
   list-style: none;
   margin: 1rem 0 0;

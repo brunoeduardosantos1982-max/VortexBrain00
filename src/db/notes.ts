@@ -1,4 +1,7 @@
 import { db, type Note } from './schema.ts'
+// Dependência UNIDIRECIONAL: db → search. O módulo de busca nunca importa
+// do db (só o tipo Note do schema).
+import { removeNote, upsertNote } from '../search/index.ts'
 
 // crypto.randomUUID() exige contexto seguro (localhost ou HTTPS).
 // Num dev server acessado por IP de rede (http://192.168.x.x) ele não existe —
@@ -18,6 +21,7 @@ export async function createNote(
     deletedAt: null,
   }
   await db.notes.add(note)
+  upsertNote(note)
   return note
 }
 
@@ -26,12 +30,15 @@ export async function updateNote(
   patch: Partial<Pick<Note, 'title' | 'body' | 'tags'>>,
 ): Promise<void> {
   await db.notes.update(id, { ...patch, updatedAt: Date.now() })
+  const updated = await db.notes.get(id)
+  if (updated) upsertNote(updated)
 }
 
 export async function softDeleteNote(id: string): Promise<void> {
   // updatedAt também sobe: numa mesclagem de backup (PLAN-pwa-offline),
   // a exclusão precisa vencer versões mais antigas da nota.
   await db.notes.update(id, { deletedAt: Date.now(), updatedAt: Date.now() })
+  removeNote(id)
 }
 
 export function getNote(id: string): Promise<Note | undefined> {

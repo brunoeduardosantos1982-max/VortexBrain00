@@ -58,6 +58,13 @@ note's title before reading/typing.
 - Inspect raw IndexedDB (e.g. soft-delete tombstones) via `page.evaluate` with `indexedDB.open('vortexbrain')` — table `notes`
 - Multi-tab sync: open a second page in the SAME context; writes in one appear in the other via Dexie liveQuery (no reload)
 
+## Second gotcha: duplicated button names
+
+Note titles appear as buttons in MULTIPLE places (sidebar list, backlinks
+panel, search results) — a bare `getByRole('button', { name: <title> })`
+hits Playwright strict-mode violations once backlinks exist. Scope clicks:
+`.note-list button`, `.backlinks button`, `.search-results button`.
+
 ## Flows worth driving on any notes-related change
 
 1. Create → type → wait 800 ms → reload → content persisted
