@@ -19,5 +19,159 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  border-right: 1px solid #2e2e4e;
   padding: 1rem;
+  overflow-y: auto;
+}
+
+.sidebar-header h1 {
+  font-size: 1.25rem;
+  margin: 0 0 0.75rem;
+}
+
+.sidebar-header button,
+.editor-bar button {
+  background: #3a3a6e;
+  color: inherit;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+}
+
+.sidebar-header button:hover,
+.editor-bar button:hover {
+  background: #4a4a8e;
+}
+
+.note-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.note-list li + li {
+  margin-top: 0.25rem;
+}
+
+.note-list button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: inherit;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-list button:hover {
+  background: #26264a;
+}
+
+.note-list button.selected {
+  background: #3a3a6e;
+}
+
+main {
+  padding: 1rem;
+  min-width: 0;
+}
+
+.hint {
+  color: #8888a8;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: calc(100vh - 2rem);
+}
+
+.editor-bar {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editor-bar input {
+  flex: 1;
+  background: #22223e;
+  color: inherit;
+  border: 1px solid #2e2e4e;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+}
+
+.editor-panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-panes textarea {
+  resize: none;
+  background: #22223e;
+  color: inherit;
+  border: 1px solid #2e2e4e;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.preview {
+  overflow-y: auto;
+  border: 1px solid #2e2e4e;
+  border-radius: 6px;
+  padding: 0 0.75rem;
+}
+
+.preview a {
+  color: #8ab4ff;
+}
+
+.preview code {
+  background: #26264a;
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+}
+
+.preview pre {
+  background: #26264a;
+  padding: 0.75rem;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+@media (max-width: 720px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid #2e2e4e;
+  }
+
+  .editor-panes {
+    grid-template-columns: 1fr;
+  }
 }
