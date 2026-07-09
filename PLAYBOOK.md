@@ -131,3 +131,56 @@ Verifique proativamente em qualquer feature nova, sem esperar ser pedido:
 > pedidos que mais repito, onde gasto turnos corrigindo você, e quais fluxos
 > manuais recorrentes deveriam virar skill ou hook. Crie a skill de maior
 > impacto.
+
+---
+
+## Template de CLAUDE.md para qualquer projeto
+
+Copie para a raiz de cada repositório seu e preencha. Regra de ouro: o arquivo
+existe para a sessão NÃO precisar redescobrir nada — se você explicou algo duas
+vezes ao modelo, esse algo pertence aqui. Mantenha curto: só o que é verdade
+estável; detalhe volátil vira comentário no código ou skill.
+
+```markdown
+# <NomeDoProjeto> — contexto para o Claude Code
+
+<1 parágrafo: o que o projeto é, para quem, e a stack em meia linha.>
+
+**Método de trabalho:** siga o PLAYBOOK.md (plano antes de código, verificação
+na superfície real, persistir aprendizado).
+
+## Comandos
+
+\`\`\`bash
+<instalar>          # ex.: npm ci
+<rodar em dev>      # e qualquer diferença dev × produção que engane (ex.: SW só no build)
+<suíte completa>    # lint && typecheck && test && build — a definição de "verde"
+<rodar de verdade>  # como servir/executar o build real para verificação E2E
+\`\`\`
+
+## Decisões de arquitetura (NÃO "consertar" sem entender o porquê)
+
+<Liste cada decisão deliberada que PARECE errada ou melhorável à primeira
+vista, com o racional. É a seção mais valiosa do arquivo: impede que uma
+sessão futura desfaça uma escolha correta. Formato:>
+- **<decisão>**: <porquê, incluindo o que quebra se mudar>
+
+## Armadilhas conhecidas
+
+<Erros enganosos já diagnosticados: o SINTOMA exato + a causa real + o que
+fazer. Ex.: "erro X ao rodar Y = ambiente, não código; solução Z".>
+
+## Convenções
+
+<Só as que divergem do óbvio: estilo, nomes, estrutura de pastas, idioma de
+comentários/commits, como escrever testes aqui.>
+
+## Fluxo de git/deploy
+
+<Branch de trabalho, como abrir PR, o que dispara deploy, URLs de produção.>
+```
+
+Sinais de que o CLAUDE.md está funcionando: as primeiras mensagens das suas
+sessões encolhem; o modelo cita as decisões em vez de contradizê-las; você
+para de repetir instruções. Sinal de que está inchado: o modelo ignora partes
+— corte o volátil, mantenha o estável.
