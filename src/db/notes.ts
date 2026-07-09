@@ -22,7 +22,19 @@ export async function createNote(
   }
   await db.notes.add(note)
   upsertNote(note)
+  requestPersistentStorageOnce()
   return note
+}
+
+// iOS Safari despeja o IndexedDB após ~7 dias sem visitar o site; storage
+// persistente reduz esse risco. Pedimos na primeira criação de nota (junto
+// de um gesto do usuário) e não no load: o Chrome concede mais nesse caso
+// e o Firefox mostra um prompt que seria hostil como popup de abertura.
+let persistRequested = false
+function requestPersistentStorageOnce(): void {
+  if (persistRequested) return
+  persistRequested = true
+  void navigator.storage?.persist?.()
 }
 
 export async function updateNote(

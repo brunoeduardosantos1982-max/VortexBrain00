@@ -242,6 +242,58 @@ main {
   overflow-x: auto;
 }
 
+.backup-controls {
+  margin-top: 1.5rem;
+  border-top: 1px solid #2e2e4e;
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.backup-controls button {
+  background: #26264a;
+  color: inherit;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+}
+
+.backup-controls button:hover {
+  background: #3a3a6e;
+}
+
+.backup-message {
+  font-size: 0.85rem;
+  color: #8888a8;
+  margin: 0;
+}
+
+.update-toast {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #26264a;
+  border: 1px solid #3a3a6e;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 40%);
+}
+
+.update-toast button {
+  background: #3a3a6e;
+  color: inherit;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
 @media (max-width: 720px) {
   .app {
     grid-template-columns: 1fr;

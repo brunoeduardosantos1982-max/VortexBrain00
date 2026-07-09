@@ -65,6 +65,21 @@ panel, search results) — a bare `getByRole('button', { name: <title> })`
 hits Playwright strict-mode violations once backlinks exist. Scope clicks:
 `.note-list button`, `.backlinks button`, `.search-results button`.
 
+## PWA / service-worker verification
+
+- Use `chromium.launchPersistentContext(userDataDir)` — SW state must
+  survive between "install" and "detect update" phases.
+- On FIRST load the SW installs but does NOT control the page
+  (registerType 'prompt', no clientsClaim). `navigator.serviceWorker.controller`
+  stays null until the next navigation — reload once before asserting.
+- Offline test: load once online → `ctx.setOffline(true)` → reload.
+- Update-toast test: rebuild (`npm run build`) with a changed visible
+  string while preview serves dist/ from disk, reload → `.update-toast`
+  appears; clicking it activates the new SW. Restore the source + rebuild
+  in a `finally`.
+- Import confirm(): register `page.on('dialog', d => d.accept())` BEFORE
+  triggering `setInputFiles`.
+
 ## Flows worth driving on any notes-related change
 
 1. Create → type → wait 800 ms → reload → content persisted

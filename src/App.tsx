@@ -6,6 +6,8 @@ import NoteList from './components/NoteList.tsx'
 import NoteEditor from './components/NoteEditor.tsx'
 import SearchBar from './components/SearchBar.tsx'
 import Backlinks from './components/Backlinks.tsx'
+import BackupControls from './components/BackupControls.tsx'
+import UpdatePrompt from './pwa/UpdatePrompt.tsx'
 
 function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -82,6 +84,7 @@ function App() {
         </header>
         <SearchBar ready={indexReady} onSelect={setSelectedId} />
         <NoteList notes={notes} selectedId={selectedId} onSelect={setSelectedId} />
+        <BackupControls />
       </aside>
       <main aria-label="notes">
         {selected ? (
@@ -98,6 +101,7 @@ function App() {
           <p className="hint">Selecione uma nota ou crie uma nova.</p>
         )}
       </main>
+      <UpdatePrompt />
     </div>
   )
 }
