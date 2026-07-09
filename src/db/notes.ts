@@ -1,0 +1,68 @@
+import { db, type Note } from './schema.ts'
+// Dependência UNIDIRECIONAL: db → search. O módulo de busca nunca importa
+// do db (só o tipo Note do schema).
+import { removeNote, upsertNote } from '../search/index.ts'
+
+// crypto.randomUUID() exige contexto seguro (localhost ou HTTPS).
+// Num dev server acessado por IP de rede (http://192.168.x.x) ele não existe —
+// sirva via localhost em vez de adicionar polyfill.
+
+export async function createNote(
+  partial: Partial<Pick<Note, 'title' | 'body' | 'tags'>> = {},
+): Promise<Note> {
+  const now = Date.now()
+  const note: Note = {
+    id: crypto.randomUUID(),
+    title: partial.title ?? '',
+    body: partial.body ?? '',
+    tags: partial.tags ?? [],
+    createdAt: now,
+    updatedAt: now,
+    deletedAt: null,
+  }
+  await db.notes.add(note)
+  upsertNote(note)
+  requestPersistentStorageOnce()
+  return note
+}
+
+// iOS Safari despeja o IndexedDB após ~7 dias sem visitar o site; storage
+// persistente reduz esse risco. Pedimos na primeira criação de nota (junto
+// de um gesto do usuário) e não no load: o Chrome concede mais nesse caso
+// e o Firefox mostra um prompt que seria hostil como popup de abertura.
+let persistRequested = false
+function requestPersistentStorageOnce(): void {
+  if (persistRequested) return
+  persistRequested = true
+  void navigator.storage?.persist?.()
+}
+
+export async function updateNote(
+  id: string,
+  patch: Partial<Pick<Note, 'title' | 'body' | 'tags'>>,
+): Promise<void> {
+  await db.notes.update(id, { ...patch, updatedAt: Date.now() })
+  const updated = await db.notes.get(id)
+  if (updated) upsertNote(updated)
+}
+
+export async function softDeleteNote(id: string): Promise<void> {
+  // updatedAt também sobe: numa mesclagem de backup (PLAN-pwa-offline),
+  // a exclusão precisa vencer versões mais antigas da nota.
+  await db.notes.update(id, { deletedAt: Date.now(), updatedAt: Date.now() })
+  removeNote(id)
+}
+
+export function getNote(id: string): Promise<Note | undefined> {
+  return db.notes.get(id)
+}
+
+export function listNotes(): Promise<Note[]> {
+  // IndexedDB não indexa null: .where('deletedAt').equals(null) lança
+  // DataError. O filtro de excluídas é feito em JS de propósito.
+  return db.notes
+    .orderBy('updatedAt')
+    .reverse()
+    .filter((n) => n.deletedAt === null)
+    .toArray()
+}
