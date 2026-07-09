@@ -9,9 +9,14 @@ description: Verify VortexBrain changes end-to-end by driving the built app in h
 
 ```bash
 npm run build
-nohup npm run preview >/tmp/preview.log 2>&1 &   # serves dist/ on http://localhost:4173
-curl -s -o /dev/null -w '%{http_code}' http://localhost:4173   # expect 200
+nohup npm run preview >/tmp/preview.log 2>&1 &
+# Vite base is /VortexBrain00/ (GitHub Pages) — the app is NOT at the root:
+curl -s -o /dev/null -w '%{http_code}' http://localhost:4173/VortexBrain00/   # expect 200
 ```
+
+To kill a running preview, use `pkill -f "[v]ite preview"` — the bracket
+trick stops pkill from matching (and killing) your own shell's cmdline,
+which exits the whole Bash tool call with code 144 before later commands run.
 
 The service worker (once PLAN-pwa-offline lands) only exists in the built app — never verify offline/PWA behavior against `npm run dev`.
 

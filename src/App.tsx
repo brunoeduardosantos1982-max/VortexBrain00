@@ -38,12 +38,14 @@ function App() {
   // funciona como URL comum — compartilhamento de verdade só existe em PWA
   // instalado no Android, então a testabilidade vem do fallback de SPA.
   useEffect(() => {
-    if (window.location.pathname !== '/share') return
+    // BASE_URL: '/' no dev, '/VortexBrain00/' no build para o GitHub Pages.
+    const base = import.meta.env.BASE_URL
+    if (window.location.pathname !== `${base}share`) return
     const params = new URLSearchParams(window.location.search)
     const title = params.get('title')
     const rest = [params.get('text'), params.get('url')].filter(Boolean).join(' ')
     const content = [title, rest].filter(Boolean).join(' — ')
-    history.replaceState(null, '', '/')
+    history.replaceState(null, '', base)
     if (!content) return
     void appendToDaily(content).then((note) => {
       setSelectedId(note.id)
