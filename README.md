@@ -19,7 +19,12 @@ npm run preview   # servir o build localmente
 A implementação segue os planos ranqueados no repositório:
 
 1. `PLAN-foundation.md` — scaffold, tooling e CI ✅
-2. `PLAN-notes-core.md` — modelo de dados, CRUD e markdown
-3. `PLAN-search-links.md` — busca sem acentos, [[wikilinks]] e backlinks
-4. `PLAN-pwa-offline.md` — PWA instalável, offline e backup
-5. `PLAN-quick-capture.md` — captura rápida, notas diárias e share target
+2. `PLAN-notes-core.md` — modelo de dados, CRUD e markdown ✅
+3. `PLAN-search-links.md` — busca sem acentos, [[wikilinks]] e backlinks ✅
+4. `PLAN-pwa-offline.md` — PWA instalável, offline e backup ✅
+5. `PLAN-quick-capture.md` — captura rápida (Ctrl+K), notas diárias e share target ✅
+
+## Atalhos
+
+- **Ctrl/Cmd+K** — captura rápida (anexa ao diário do dia, ou "nova nota")
+- **[[Título]]** no corpo de uma nota — link para outra nota (cria ao clicar se não existir)

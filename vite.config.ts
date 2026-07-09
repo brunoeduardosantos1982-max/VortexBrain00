@@ -25,6 +25,13 @@ export default defineConfig({
           { src: '/pwa-512.png', sizes: '512x512', type: 'image/png' },
           { src: '/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
+        // GET (query params) e não POST multipart: muito mais simples e a
+        // rota /share também funciona como URL normal no navegador.
+        share_target: {
+          action: '/share',
+          method: 'GET',
+          params: { title: 'title', text: 'text', url: 'url' },
+        },
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
@@ -35,5 +42,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/test/setup.ts',
+    // O container roda em UTC; o teste de nota diária precisa de um fuso
+    // real para provar que a chave de data é local e não UTC.
+    env: { TZ: 'America/Sao_Paulo' },
   },
 })

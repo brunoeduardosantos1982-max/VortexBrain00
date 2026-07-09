@@ -7,11 +7,18 @@ import NoteEditor from './components/NoteEditor.tsx'
 import SearchBar from './components/SearchBar.tsx'
 import Backlinks from './components/Backlinks.tsx'
 import BackupControls from './components/BackupControls.tsx'
+import QuickCapture from './components/QuickCapture.tsx'
 import UpdatePrompt from './pwa/UpdatePrompt.tsx'
+import { useHotkey } from './hooks/useHotkey.ts'
+import { appendToDaily } from './db/daily.ts'
 
 function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [indexReady, setIndexReady] = useState(false)
+  const [captureOpen, setCaptureOpen] = useState(false)
+  const [shareMsg, setShareMsg] = useState<string | null>(null)
+
+  useHotkey(useCallback(() => setCaptureOpen(true), []))
   // useLiveQuery reflete gravações de outras abas automaticamente (Dexie
   // faz broadcast) — não crie mecanismo manual de refresh.
   const notes = useLiveQuery(listNotes)
@@ -24,6 +31,24 @@ function App() {
     void listNotes().then((all) => {
       buildIndex(all)
       setIndexReady(true)
+    })
+  }, [])
+
+  // Web Share Target (manifest aponta /share com method GET). A rota também
+  // funciona como URL comum — compartilhamento de verdade só existe em PWA
+  // instalado no Android, então a testabilidade vem do fallback de SPA.
+  useEffect(() => {
+    if (window.location.pathname !== '/share') return
+    const params = new URLSearchParams(window.location.search)
+    const title = params.get('title')
+    const rest = [params.get('text'), params.get('url')].filter(Boolean).join(' ')
+    const content = [title, rest].filter(Boolean).join(' — ')
+    history.replaceState(null, '', '/')
+    if (!content) return
+    void appendToDaily(content).then((note) => {
+      setSelectedId(note.id)
+      setShareMsg('Compartilhamento capturado ✓')
+      window.setTimeout(() => setShareMsg(null), 3000)
     })
   }, [])
 
@@ -101,6 +126,16 @@ function App() {
           <p className="hint">Selecione uma nota ou crie uma nova.</p>
         )}
       </main>
+      <QuickCapture
+        open={captureOpen}
+        onClose={() => setCaptureOpen(false)}
+        onSaved={setSelectedId}
+      />
+      {shareMsg && (
+        <div className="update-toast" role="status">
+          {shareMsg}
+        </div>
+      )}
       <UpdatePrompt />
     </div>
   )

@@ -80,6 +80,18 @@ hits Playwright strict-mode violations once backlinks exist. Scope clicks:
 - Import confirm(): register `page.on('dialog', d => d.accept())` BEFORE
   triggering `setInputFiles`.
 
+## Quick-capture flows
+
+- Wait for app mount (`+ Nova nota` button visible) BEFORE `keyboard.press('Control+k')` —
+  pressing right after goto races the React listener attach.
+- The capture textarea is `.capture-modal textarea`; a bare
+  `getByLabel('Captura')` also matches the dialog's aria-label "Captura rápida"
+  (getByLabel is substring by default) → strict-mode violation.
+- Daily-note assertions: query IndexedDB records with a `dateKey` field.
+- The lost-update probe worth keeping: type in the open daily note (do NOT
+  wait for autosave), Ctrl+K capture, then assert BOTH texts in the db and
+  that the editor textarea shows the appended bullet (rehydration).
+
 ## Flows worth driving on any notes-related change
 
 1. Create → type → wait 800 ms → reload → content persisted

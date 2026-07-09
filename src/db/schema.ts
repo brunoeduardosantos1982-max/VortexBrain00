@@ -8,6 +8,7 @@ export interface Note {
   createdAt: number // Date.now() — definido no código; IndexedDB não tem defaults
   updatedAt: number
   deletedAt: number | null
+  dateKey?: string // YYYY-MM-DD LOCAL — presente só em notas diárias
 }
 
 export class VortexDB extends Dexie {
@@ -22,6 +23,11 @@ export class VortexDB extends Dexie {
     // não precisarem de migração.
     this.version(1).stores({
       notes: 'id, title, updatedAt, deletedAt, *tags',
+    })
+    // v2: índice dateKey para a nota diária (campo novo é opcional,
+    // não precisa de upgrade() — registros v1 simplesmente não o têm).
+    this.version(2).stores({
+      notes: 'id, title, updatedAt, deletedAt, *tags, dateKey',
     })
   }
 }
