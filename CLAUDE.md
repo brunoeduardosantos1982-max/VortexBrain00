@@ -45,6 +45,20 @@ completa de Chromium headless, incluindo as armadilhas de timing já descobertas
 - **Editor keyed por note.id** + flush no unmount + registry de flush
   (lib/flushRegistry.ts) + re-hidratação por updatedAt: é o conjunto que
   impede lost updates entre autosave e captura rápida
+- **Valuation é entidade PRÓPRIA** (tabela `valuations`, Dexie v3), não uma
+  nota — decisão do usuário por "tela separada". Custo aceito: não aparece na
+  busca nem em wikilinks. Em troca, o **backup foi para version 2** para incluir
+  valuations (merge por updatedAt + tombstone), senão trocar de aparelho os
+  perderia. O RESULTADO DCF não é persistido — recalcula no render a partir dos
+  inputs (mesma filosofia dos wikilinks). Editor keyed por valuation.id + flush
+  no unmount, igual às notas
+- **Chave da Alpha Vantage vive SÓ no navegador** (localStorage), nunca no
+  bundle: app é estático em página pública, chave embutida seria lida/queimada.
+  Fetch só para tickers dos EUA (BR não é coberto) e acionado por botão (limite
+  grátis 25/dia). A API tem CORS, então roda direto do navegador
+- **Motor de valuation exige taxaDesconto > crescimentoPerpetuo** e sinaliza
+  peso da perpetuidade > 75%: conserta os furos da planilha-fonte, que dava
+  "compra" para tudo
 
 ## Deploy
 

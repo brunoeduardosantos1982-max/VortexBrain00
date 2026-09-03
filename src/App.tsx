@@ -8,6 +8,7 @@ import SearchBar from './components/SearchBar.tsx'
 import Backlinks from './components/Backlinks.tsx'
 import BackupControls from './components/BackupControls.tsx'
 import QuickCapture from './components/QuickCapture.tsx'
+import ValuationScreen from './components/ValuationScreen.tsx'
 import UpdatePrompt from './pwa/UpdatePrompt.tsx'
 import { useHotkey } from './hooks/useHotkey.ts'
 import { appendToDaily } from './db/daily.ts'
@@ -17,6 +18,9 @@ function App() {
   const [indexReady, setIndexReady] = useState(false)
   const [captureOpen, setCaptureOpen] = useState(false)
   const [shareMsg, setShareMsg] = useState<string | null>(null)
+  // Sem router (o app não usa um): um simples toggle de visão. Notas e
+  // Valuations são áreas separadas por decisão de produto (PLAN-valuation.md).
+  const [view, setView] = useState<'notes' | 'valuations'>('notes')
 
   useHotkey(useCallback(() => setCaptureOpen(true), []))
   // useLiveQuery reflete gravações de outras abas automaticamente (Dexie
@@ -107,27 +111,51 @@ function App() {
       <aside className="sidebar">
         <header className="sidebar-header">
           <h1>VortexBrain</h1>
-          <button onClick={() => void handleNew()}>+ Nova nota</button>
+          <nav className="view-nav">
+            <button
+              className={view === 'notes' ? 'active' : ''}
+              onClick={() => setView('notes')}
+            >
+              Notas
+            </button>
+            <button
+              className={view === 'valuations' ? 'active' : ''}
+              onClick={() => setView('valuations')}
+            >
+              Valuations
+            </button>
+          </nav>
+          {view === 'notes' && <button onClick={() => void handleNew()}>+ Nova nota</button>}
         </header>
-        <SearchBar ready={indexReady} onSelect={setSelectedId} />
-        <NoteList notes={notes} selectedId={selectedId} onSelect={setSelectedId} />
+        {view === 'notes' && (
+          <>
+            <SearchBar ready={indexReady} onSelect={setSelectedId} />
+            <NoteList notes={notes} selectedId={selectedId} onSelect={setSelectedId} />
+          </>
+        )}
         <BackupControls />
       </aside>
-      <main aria-label="notes">
-        {selected ? (
-          <>
-            <NoteEditor
-              key={selected.id}
-              note={selected}
-              onDelete={(id) => void handleDelete(id)}
-              resolveWikilink={resolveWikilink}
-            />
-            <Backlinks note={selected} notes={notes} onSelect={setSelectedId} />
-          </>
-        ) : (
-          <p className="hint">Selecione uma nota ou crie uma nova.</p>
-        )}
-      </main>
+      {view === 'valuations' ? (
+        <main aria-label="valuations">
+          <ValuationScreen />
+        </main>
+      ) : (
+        <main aria-label="notes">
+          {selected ? (
+            <>
+              <NoteEditor
+                key={selected.id}
+                note={selected}
+                onDelete={(id) => void handleDelete(id)}
+                resolveWikilink={resolveWikilink}
+              />
+              <Backlinks note={selected} notes={notes} onSelect={setSelectedId} />
+            </>
+          ) : (
+            <p className="hint">Selecione uma nota ou crie uma nova.</p>
+          )}
+        </main>
+      )}
       <QuickCapture
         open={captureOpen}
         onClose={() => setCaptureOpen(false)}
