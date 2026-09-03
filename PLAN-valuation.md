@@ -1,7 +1,30 @@
-# PLAN-valuation — Valuation DCF (Tríade dos Dividendos) como nota
+# PLAN-valuation — Valuation DCF (Tríade dos Dividendos)
 
-**Depende de:** notes-core, search-links (bloco vive dentro de uma nota).
-**Bloqueia:** fase 2 (fetch de preço ao vivo com chave do usuário).
+**Depende de:** notes-core, pwa-offline (backup).
+**Bloqueia:** —
+
+> ## REVISÃO (decisão do usuário, sobrepõe o texto original abaixo)
+>
+> O usuário escolheu **tela separada** (não nota+bloco) e **com API** (Alpha
+> Vantage) em vez do MVP manual. Consequências fixadas:
+>
+> - **Valuation é uma entidade própria** (tabela Dexie `valuations`, version 3),
+>   não uma nota. Perde busca e wikilinks de graça — tradeoff aceito.
+> - **Backup PRECISA incluir valuations.** Uma tabela nova fora do backup
+>   quebraria a promessa "restaurar noutro aparelho". BackupFile vira version 2
+>   (lê v1 sem valuations). Merge por id com updatedAt-vence, igual às notas;
+>   soft-delete com tombstone (`deletedAt`), mesma razão das notas.
+> - **Tela "Valuations"**: toggle de visão na `App.tsx` (o app não usa router —
+>   não introduzir um). Formulário de input + painel de resultado + 3 cenários.
+> - **Alpha Vantage só para tickers dos EUA** (auto-preenche preço + histórico
+>   de lucro). BR continua manual (cobertura ruim). **Chave só no navegador**
+>   (localStorage), digitada em config — NUNCA no repositório/bundle. Rate limit
+>   grátis 25/dia: fetch é acionado por botão, não automático.
+> - O resultado DCF NÃO é persistido — recalcula no render a partir dos inputs
+>   salvos (mesma filosofia dos wikilinks: derivado, não armazenado).
+>
+> O motor puro (`dcf.ts`) é idêntico ao planejado e já está verde. O resto das
+> "Decisões fixadas" de matemática/guard-rails abaixo continua valendo.
 
 ## Objetivo
 

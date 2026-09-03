@@ -11,8 +11,29 @@ export interface Note {
   dateKey?: string // YYYY-MM-DD LOCAL — presente só em notas diárias
 }
 
+// Valuation DCF de uma empresa. O RESULTADO (preço justo etc.) não é
+// persistido — recalcula no render a partir destes inputs, como os wikilinks
+// resolvem por título em tempo de render. Soft-delete com tombstone pela mesma
+// razão das notas: exclusões precisam viajar no backup.
+export interface Valuation {
+  id: string
+  ticker: string
+  moeda: string // 'BRL' | 'USD' — rótulo de exibição
+  precoAtual: number
+  acoes: number
+  taxaDesconto: number
+  lucroBase: number
+  crescimento: number[]
+  crescimentoPerpetuo: number
+  margemSegurancaMin: number
+  createdAt: number
+  updatedAt: number
+  deletedAt: number | null
+}
+
 export class VortexDB extends Dexie {
   notes!: Table<Note, string>
+  valuations!: Table<Valuation, string>
 
   constructor() {
     super('vortexbrain')
@@ -28,6 +49,13 @@ export class VortexDB extends Dexie {
     // não precisa de upgrade() — registros v1 simplesmente não o têm).
     this.version(2).stores({
       notes: 'id, title, updatedAt, deletedAt, *tags, dateKey',
+    })
+    // v3: tabela nova valuations. Tabela nova não exige upgrade() — bancos v2
+    // simplesmente passam a ter a tabela vazia. deletedAt fica fora do índice
+    // (IndexedDB não indexa null; filtro de vivos é em JS, igual às notas).
+    this.version(3).stores({
+      notes: 'id, title, updatedAt, deletedAt, *tags, dateKey',
+      valuations: 'id, ticker, updatedAt',
     })
   }
 }
